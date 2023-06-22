@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %} Let's Quiz | Welcome {% endblock title %}
+{% block content %}
+ 
+
+    {% for categorie in categories%}
+    <h2><span class="badge bg-secondary">{{categorie}}</span></h2>
+     <ul>
+        {% for list_question in questions%}
+        {% for i in range(0, len(list_question))%}
+            <li>{{list_question[i].html}}</li>
+        {%endfor%}
+     </ul>
+     {%endfor%}
+    {% endfor%}
+
+
+
+{% endblock %}

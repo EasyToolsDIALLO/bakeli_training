@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if question is None %}
+
+<div class="container">
+  <div class="jumbotron my-4">
+    <h1> Vous avez déjà répondu à toutes nos questions. </h1>
+    <a href="{% url 'leaderboard' %}" class="btn btn-lg btn-info"><i class="fa fa-trophy" aria-hidden="true"></i> See the leaderboard here <i class="fa fa-trophy" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+{% else %}
+
+<div class="container">
+  <div class="jumbotron my-4">
+    <h1>Nombre de responses: {{number_answer}}/10</h1>
+    <h3 class="text-info">{{ question.html|safe }}</h3>
+    <h4> <span class="badge bg-secondary">{{question.categorie.nom|safe }}</span></h4>
+    <form class="form" action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="question_pk" value="{{ question.pk }}">
+        {% for choice in question.choices.all %}
+          <div class="form-check mx-4">
+            <input class="form-check-input" type="radio" name="choice_pk" id="choice-{{ forloop.counter }}" value="{{ choice.pk }}">
+            <label class="form-check-label" for="choice-{{ forloop.counter }}">
+              {{ choice.html|safe }}
+            </label>
+          </div>
+
+        {% endfor %}
+        <input class="btn btn-info btn-lg" type="submit" value="Submit">  
+    </form>
+  </div>
+</div>
+{% endif %}
+
+{% endblock content %}

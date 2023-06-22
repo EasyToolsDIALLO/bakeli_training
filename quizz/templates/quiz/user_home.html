@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %} Let's Quiz | Welcome {% endblock title %}
+{% block content %}
+<div class="container my-4">
+    <div class="jumbotron">
+
+	      <h2 class="text-center text-info">Toutes nos félicitations!! Vous vous êtes connecté avec succès.</h2>
+	      <h3 class="text-info text-center">Avant de jouer au quiz, voici les règles</h3>
+
+        <div class="row">
+
+            <div class="card border-info mx-4 my-4">
+                <div class="card-body text-info">
+                    <h4 class="card-title">Règles :</h4>
+                    <p class="card-text">
+                        <ul style="list-style:decimal;">
+                            <li>Toutes les questions sont des questions à choix multiples.</li>
+                            <li><span class="text-danger">Un seul choix est correct.</span></li>
+                            <!-- <li>Every question carry equal marks i.e. <span class="text-danger">4 marks for each question.</span></li> -->
+                            <li>Chaque question n'est affichée qu'une seule fois par utilisateur.</li>
+                            <li>Essayez de répondre le plus rapidement possible</li>
+                            <li>Si vous appuyez sur Actualiser ou revenez à la page précédente, une nouvelle question vous sera proposée et la question à laquelle vous vous trouviez sera considérée comme une tentative.</li>
+                            <li>Les questions sont affichées au hasard pour chaque utilisateur.</li>
+                            <li>Vous pouvez obtenir vos resultats à la fin du QUIZZ</li>
+                        </ul>
+                    </p>
+                    {% for parcours in liste_parcours%}
+                    <a class="btn btn-lg btn-info mt-1" href="/play/{{parcours.id}}/False" role="button"> {{ parcours.name}}</a>
+                    {% endfor%}
+                </div>  
+                <div class="card-footer">Les regles sont modifiées le 11-Aout-2022</div>  
+            </div>  
+        </div>  
+
+    </div>
+</div>
+{% endblock content %}
