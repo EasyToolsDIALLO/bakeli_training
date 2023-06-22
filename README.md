@@ -9,7 +9,7 @@ TAKE ON THE PROJECT
 3- Clone the project and go inside the project with cd command  
     `git clone url_of_project`  
 3- Install the packages from requirements file  
-    `pip install -r requirements`  
+    `pip install -r requirements`   
 4- Create a postgreSQL database  
 5- Modify in settings file the informations to connect to the database according to yours  
 6- Migrate models  
