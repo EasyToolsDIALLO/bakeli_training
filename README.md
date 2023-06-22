@@ -5,7 +5,7 @@ TAKE ON THE PROJECT
 ## NB: OS used is WINDOWS 10. Be carefull with some commands if you use and other OS search the equivalent  
 1- Install the virtual environment with Python 3.8 
   
-2. Activate the virtual environment  
+2- Activate the virtual environment  
 &nbsp;&nbsp;&nbsp;&nbsp;`py -3.8 -m venv name_of_your_venv`  
   
 3- Clone the project and go inside the project with cd command  
