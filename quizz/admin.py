@@ -1,3 +1,60 @@
 from django.contrib import admin
 
+from .models import Question, Choice, Categorie, Parcours, Domaine, Tutorial
+from .forms import QuestionForm, ChoiceForm, ChoiceInlineFormset
+# Register your models here.
+
+
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    can_delete = False
+    max_num = Choice.MAX_CHOICES_COUNT
+    min_num = Choice.MAX_CHOICES_COUNT
+    form = ChoiceForm
+    formset = ChoiceInlineFormset
+
+
+class QuestionAdmin(admin.ModelAdmin):
+    model = Question
+    inlines = (ChoiceInline, )
+    list_display = ['html', 'is_published', 'categorie', 'maximum_marks']
+    list_filter = ['is_published']
+    search_fields = ['html', 'choices__html']
+    actions = None
+    form = QuestionForm
+
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
+
+    # def has_change_permission(self, request, obj=None):
+    #     if obj is not None and obj.pk is not None and obj.is_published is True:
+    #         return False
+    #     return True
+
+
+class CategorieAdmin(admin.ModelAdmin):
+    model = Categorie
+    list_display = ['nom']
+
+
+class ParcoursAdmmin(admin.ModelAdmin):
+    model = Parcours
+    list_display = ['name']
+
+
+class DomaineAdmin(admin.ModelAdmin):
+    model = Domaine
+    list_display = ['name']
+
+
+class TutorialAdmin(admin.ModelAdmin):
+    model = Tutorial
+    list_display = ['categorie', 'contenu', 'link']
+
+
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Categorie, CategorieAdmin)
+admin.site.register(Parcours, ParcoursAdmmin)
+admin.site.register(Domaine, DomaineAdmin)
+admin.site.register(Tutorial, TutorialAdmin)
 # Register your models here.
