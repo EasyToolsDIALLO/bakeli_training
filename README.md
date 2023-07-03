@@ -19,7 +19,8 @@ To take on the project
     py manage.py runserver  
 
 
-## NB: Make sure you give some data. And your parcours specify the domain and the category.  
+## NB:   
+    Make sure you give some data. And your parcours specify the domain and the category.  
     The questions for a category must be fill before you test the website if else you will get some error because there no data
     
 
