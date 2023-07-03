@@ -15,7 +15,8 @@ To take on the project
     py manage.py migrate  
 
   After that everything is settle so run the server with the following command and enjoy :)  
-  
-  py manage.py runserver
+    
+    py manage.py runserver  
+    
 
   
