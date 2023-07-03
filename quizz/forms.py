@@ -32,6 +32,7 @@ class ChoiceInlineFormset(forms.BaseInlineFormSet):
         correct_choices_count = 0
         for form in self.forms:
             if not form.is_valid():
+                print("ERRORRRRRRRRRRRRRR")
                 return
 
             if form.cleaned_data and form.cleaned_data.get('is_correct') is True:

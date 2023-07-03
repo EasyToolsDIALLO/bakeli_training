@@ -14,12 +14,12 @@
 
 <div class="container">
   <div class="jumbotron my-4">
-    <h1>Nombre de responses: {{number_answer}}/10</h1>
+    <h1>Nombre de responses: {{number_answer}}/{{max_question}}</h1>
     <h3 class="text-info">{{ question.html|safe }}</h3>
     <h4> <span class="badge bg-secondary">{{question.categorie.nom|safe }}</span></h4>
     <form class="form" action="" method="post">
         {% csrf_token %}
-        <input type="hidden" name="question_pk" value="{{ question.pk }}">
+        <input type="hidden" name="question__pk" value="{{ question.pk }}">
         {% for choice in question.choices.all %}
           <div class="form-check mx-4">
             <input class="form-check-input" type="radio" name="choice_pk" id="choice-{{ forloop.counter }}" value="{{ choice.pk }}">

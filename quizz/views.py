@@ -22,6 +22,7 @@ from quizz.recommender import Recommender, SIM_OPTION
 def home(request):
     domaines = Domaine.objects.all()
     context = {'domaines': domaines}
+    # print("Domaine: ", domaines)
     return render(request, 'quiz/home.html', context=context)
 
 
@@ -29,6 +30,7 @@ def home(request):
 def user_home(request, id_domaine):
     parcours = Parcours.objects.filter(domaine_id=id_domaine)
     context = {'liste_parcours': parcours}
+    # print("Parcours: ", parcours)
     return render(request, 'quiz/user_home.html', context=context)
 
 
@@ -45,59 +47,68 @@ def leaderboard(request):
 
 @login_required()
 def play(request, id_parcours, completed):
-
-    # global created
     quiz_profile = None
     if completed == "False":
         quizprofiles = QuizProfile.objects.filter(
-            user_id=request.user, parcours_id=id_parcours, completed=False)
+            user_id=request.user.id, parcours_id=id_parcours, completed=False)
         if len(quizprofiles) == 0:
             quiz_profile = QuizProfile.objects.create(
                 user_id=request.user.id, parcours_id=id_parcours)
         else:
-            quiz_profile = QuizProfile.objects.filter(
-                user_id=request.user, parcours_id=id_parcours, completed=False)[0]
-    print("quiz id ", quiz_profile.id)
-    parcours = Parcours.objects.get(id=id_parcours)
-    categories_parcours = list(parcours.categorie.all())
-    # print(f"First{created}")
-    if request.method == 'POST':
-        # list_quizprofile = list(QuizProfile.objects.filter(user = request.user))
-        # quiz_profile = list_quizprofile[-1]
+            quiz_profile = quizprofiles[0]
 
-        question_pk = request.POST.get('question_pk')
-        attempted_question = quiz_profile.attempts.select_related(
-            'question').get(question_id=question_pk)
-        choice_pk = request.POST.get('choice_pk')
+        print("quiz id ", quiz_profile.id)
+        parcours = Parcours.objects.get(id=id_parcours)
+        categories_parcours = list(parcours.categorie.all())
 
-        try:
-            selected_choice = attempted_question.question.choices.get(
-                pk=choice_pk)
-        except ObjectDoesNotExist:
-            return no_choice_selected(request, id_parcours)
+        if request.method == 'POST':
+            '''list_quizprofile = list(
+                QuizProfile.objects.filter(user=request.user))
+            quiz_profile = list_quizprofile[-1]'''
+            question_pk = request.POST['question__pk']
+            attempted_question = quiz_profile.attempts.select_related(
+                'question').get(question_id=question_pk)
+            choice_pk = request.POST['choice_pk']
+            print("********************************************************")
+            print("Question: {} and Attempted: {} and Choice: {}".format(
+                question_pk, attempted_question, choice_pk))
+            try:
+                selected_choice = attempted_question.question.choices.get(
+                    pk=choice_pk)
+            except ObjectDoesNotExist:
+                return no_choice_selected(request, id_parcours)
 
-        quiz_profile.evaluate_attempt(attempted_question, selected_choice)
-
-        return redirect(f'/play/{id_parcours}/{quiz_profile.completed}')
-    else:
-        categorie = choice(categories_parcours)
-        question = quiz_profile.get_new_question(categorie.id)
-        completed_quiz = str(quiz_profile.completed)
-        number_answer = len(AttemptedQuestion.objects.filter(
-            quiz_profile_id=quiz_profile.id))
-        if question is not None:
-            quiz_profile.create_attempt(question)
+            quiz_profile.evaluate_attempt(attempted_question, selected_choice)
+            # return render(request, "quiz/test.html")
+            return redirect(f'/play/{id_parcours}/{quiz_profile.completed}')
         else:
-            print("completed quiz profile")
 
-        context = {
-            'question': question,
-            'parcours': parcours,
-            'completed': completed_quiz,
-            'number_answer': number_answer,
-        }
+            categorie = choice(categories_parcours)
+            print("categorie: ", categorie.id)
+            question = quiz_profile.get_new_question(categorie.id)
+            print("question: ", question)
+            completed_quiz = str(quiz_profile.completed)
+            print("completed_quiz: ", completed_quiz)
+            number_answer = len(AttemptedQuestion.objects.filter(
+                quiz_profile_id=quiz_profile.id))
+            print("answer: ", number_answer)
+            if question is not None:
+                quiz_profile.create_attempt(question)
+            else:
+                print("completed quiz profile")
 
-        return render(request, 'quiz/play.html', context=context)
+            context = {
+                'question': question,
+                'parcours': parcours,
+                'completed': completed_quiz,
+                'number_answer': number_answer,
+                'max_question': Choice.MAX_CHOICES_COUNT
+            }
+
+            return render(request, 'quiz/play.html', context=context)
+            # return render(request, "quiz/test.html")
+
+    # return render(request, "quiz/test.html")
 
 
 @login_required()
@@ -158,15 +169,16 @@ def error_500(request):
 def resume_test(request, quiz_profile_id,):
     attempts = AttemptedQuestion.objects.filter(quiz_profile=quiz_profile_id)
     quizprofile = QuizProfile.objects.get(id=quiz_profile_id)
-    results = quizprofile.calculation()
+    results = quizprofile.calculation() or []
     tresult = []
     percentage = []
-    for result in results:
-        tmp = {
-            'result': f'{result[0]},   {round(result[2]/result[1]*100)} %',
-            'percent': str(result[2]/result[1]*100),
-        }
-        tresult.append(tmp)
+    if results != []:
+        for result in results:
+            tmp = {
+                'result': f'{result[0]},   {round(result[2]/result[1]*100)} %',
+                'percent': str(result[2]/result[1]*100),
+            }
+            tresult.append(tmp)
 
     context = {
         'attempts': attempts,
@@ -177,11 +189,13 @@ def resume_test(request, quiz_profile_id,):
 
 def affiche_categories(request, id_parcours):
     parcours = Parcours.objects.get(id=id_parcours)
-    categories = parcours.categorie.all()
+    categories = parcours.categorie.all() or []
     questions = []
-    for categorie in categories:
-        tmp = list(Question.objects.filter(categorie=categorie.id))
-        questions.append((categorie, tmp))
+
+    if categories != []:
+        for categorie in categories:
+            tmp = list(Question.objects.filter(categorie=categorie.id))
+            questions.append((categorie, tmp))
     context = {
         'categories': categories,
         'questions': questions
@@ -234,13 +248,11 @@ def recommandation(request):
         user_id=request.user.id).distinct('parcours')
     last_quiz = []
     list_of_recommandation = {
-        'critique': [],
-        'amelioration': [],
+        'amelioration': []
     }
 
     list_length = {
-        'critique': 0,
-        'amelioration': 0,
+        'amelioration': 0
     }
 
     for elt in quiz:
@@ -256,15 +268,10 @@ def recommandation(request):
                 quizprofile.id, categorie.nom)*100)
             tuto = Tutorial.objects.get(categorie_id=categorie.id)
             print(f"tmp {tmp} categorie{categorie.nom}")
-            if tmp > 60:
-
-                list_of_recommandation['critique'].append(tuto)
-
-            elif tmp > 30:
-
+            if tmp < 80:
                 list_of_recommandation['amelioration'].append(tuto)
 
-    list_length['critique'] = len(list_of_recommandation['critique'])
+    # list_length['critique'] = len(list_of_recommandation['critique'])
     list_length['amelioration'] = len(list_of_recommandation['amelioration'])
 
     context = {

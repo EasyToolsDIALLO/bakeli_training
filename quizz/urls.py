@@ -20,5 +20,5 @@ urlpatterns = [
     path('add-question', views.add_questions_with_excel, name='add_with_excel'),
     path('recommandation', views.recommandation, name='recommandation'),
     path('error', views.error_404, name='not_found'),
-    path('api', include(router.urls)),
+    # path('api', include(router.urls)),
 ]

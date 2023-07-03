@@ -3,13 +3,14 @@ import pandas as pd
 from surprise import Dataset
 from surprise import Reader
 from surprise import KNNWithMeans
+
 SIM_OPTION = {
     "name": "cosine",
     "user_based": False,  # Compute  similarities between items
 }
 
 
-def convert_quizprofile_to_liste(quiz_liste):
+def convert_quizprofile_to_dict(quiz_liste):
     categories = []
     quiz = []
     ratings = []
@@ -39,9 +40,11 @@ class Recommender(KNNWithMeans):
         return list_of_not_success_quiz
 
     def interaction_table(self, id_user):
+        # Get the quizz whose success percentage don't reach 100%
         quiz_liste = self.get_quizprofile(id_user)
+
         interact = {}
-        interact["categories"], interact["quiz"], interact["ratings"] = convert_quizprofile_to_liste(
+        interact["categories"], interact["quiz"], interact["ratings"] = convert_quizprofile_to_dict(
             quiz_liste)
         df = pd.DataFrame(interact)
         # print(df)

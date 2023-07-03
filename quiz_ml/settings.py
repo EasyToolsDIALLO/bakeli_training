@@ -85,9 +85,9 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'bakeli_training_db',
+        'NAME': 'bakeli_quizz_db',
         'USER': 'ousmane',
-        'PASSWORD': 'bakeli2023',
+        'PASSWORD': 'test2023',
         'HOST': 'localhost',
         'PORT': '5432',
     }
