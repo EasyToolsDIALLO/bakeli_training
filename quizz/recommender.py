@@ -51,6 +51,7 @@ class Recommender(KNNWithMeans):
         reader = Reader(rating_scale=(0, 1))
         data = Dataset.load_from_df(
             df[["quiz", "categories", "ratings"]], reader)
+        
         return data
 
     def train_recommenders(self, id_user):
